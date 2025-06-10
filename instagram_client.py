@@ -7,7 +7,7 @@ from playwright.sync_api import sync_playwright, Browser, BrowserContext, Page
 
 
 class InstagramClient:
-    """A simple Playwright-based Instagram client with proxy rotation."""
+    """Playwright を利用したシンプルな Instagram クライアント。"""
 
     def __init__(self, proxy_config: str = "proxies.json", session_file: str = "session.json") -> None:
         self.proxy_config = Path(proxy_config)
@@ -40,7 +40,7 @@ class InstagramClient:
         self.current_proxy = self._rotate_proxy()
 
     def login(self, retries: int = 3) -> None:
-        """Log into Instagram with retry logic."""
+        """Instagram にログインする。失敗した場合は指定回数まで再試行する。"""
 
         username = os.getenv("INSTA_USER")
         password = os.getenv("INSTA_PASSWORD")
@@ -54,22 +54,22 @@ class InstagramClient:
                     launch_args = {}
                     if self.current_proxy:
                         launch_args["proxy"] = {"server": self.current_proxy}
-                    self.browser = p.chromium.launch(headless=True, **launch_args)
+                    browser = p.chromium.launch(headless=True, **launch_args)
                     context_args = {}
                     if self.session_file.exists():
                         context_args["storage_state"] = str(self.session_file)
-                    self.context = self.browser.new_context(**context_args)
-                    self.page = self.context.new_page()
-                    self.page.goto("https://www.instagram.com/", wait_until="networkidle")
-                    if "accounts/login" in self.page.url:
-                        # Need to login
-                        self.page.fill("input[name='username']", username)
-                        self.page.fill("input[name='password']", password)
-                        self.page.click("button[type='submit']")
-                        self.page.wait_for_load_state("networkidle")
-                        if "accounts/login" in self.page.url:
+                    context = browser.new_context(**context_args)
+                    page = context.new_page()
+                    page.goto("https://www.instagram.com/", wait_until="networkidle")
+                    if "accounts/login" in page.url:
+                        page.fill("input[name='username']", username)
+                        page.fill("input[name='password']", password)
+                        page.click("button[type='submit']")
+                        page.wait_for_load_state("networkidle")
+                        if "accounts/login" in page.url:
                             raise RuntimeError("Login failed")
-                        self.save_session()
+                    context.storage_state(path=str(self.session_file))
+                    browser.close()
                     return
             except Exception:
                 if attempt == retries:
@@ -81,7 +81,7 @@ class InstagramClient:
             self.context.storage_state(path=str(self.session_file))
 
     def upload_content(self, media_path: str, caption: str, media_type: str = "feed") -> str:
-        """Upload an image or video as a feed post, story, or reel."""
+        """画像や動画をアップロードして投稿する。"""
         if media_type not in {"feed", "story", "reel"}:
             raise ValueError("media_type must be 'feed', 'story', or 'reel'")
 

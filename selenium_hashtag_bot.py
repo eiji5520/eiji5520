@@ -68,7 +68,7 @@ def interact_with_hashtags(
     proxy_config: str = "proxies.json",
     log_file: str = "actions.csv",
 ) -> None:
-    """Interact with posts for given hashtags using Selenium."""
+    """ハッシュタグごとの投稿に自動で反応する。"""
     proxy_path = Path(proxy_config)
     proxy = _rotate_proxy(proxy_path)
 

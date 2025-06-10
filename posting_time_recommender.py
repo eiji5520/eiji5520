@@ -4,20 +4,7 @@ from sklearn.linear_model import LinearRegression
 
 
 def recommend_posting_times(data_path: str) -> list[int]:
-    """Return top 3 posting hours predicted to maximize engagement.
-
-    Parameters
-    ----------
-    data_path : str
-        Path to a CSV file containing columns 'timestamp', 'likes', and
-        'comments'.
-
-    Returns
-    -------
-    list[int]
-        Three hours of the day (0-23) sorted by predicted engagement in
-        descending order.
-    """
+    """エンゲージメントが高くなる投稿時間を3つ推測して返す。"""
     df = pd.read_csv(data_path, parse_dates=["timestamp"])
     df["hour"] = df["timestamp"].dt.hour
     df["engagement"] = df["likes"] + df["comments"]

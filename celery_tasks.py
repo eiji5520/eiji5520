@@ -16,58 +16,53 @@ app = Celery('scheduled_posts', broker=BROKER_URL)
 
 
 def _get_connection():
-    """Return a new connection to the scheduled posts database."""
+    """スケジュール用データベースへの接続を返す。"""
     if not DATABASE_URL:
         raise EnvironmentError("DATABASE_URL must be set")
     return psycopg2.connect(DATABASE_URL)
 
 
 def add_scheduled_post(image_path: str, caption: str, post_time: datetime, media_type: str) -> None:
-    """Insert a new post into the scheduled_posts table."""
-    conn = _get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        INSERT INTO scheduled_posts (image_path, caption, post_time, type, status)
-        VALUES (%s, %s, %s, %s, 'pending')
-        """,
-        (image_path, caption, post_time, media_type),
-    )
-    conn.commit()
-    cur.close()
-    conn.close()
+    """scheduled_posts テーブルに新しい投稿を追加する。"""
+    with _get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO scheduled_posts (image_path, caption, post_time, type, status)
+                VALUES (%s, %s, %s, %s, 'pending')
+                """,
+                (image_path, caption, post_time, media_type),
+            )
+        conn.commit()
 
 
 @app.task
 def process_scheduled_posts():
-    """Upload scheduled posts to Instagram."""
-    conn = _get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        SELECT id, image_path, caption, post_time, type
-        FROM scheduled_posts
-        WHERE status != 'posted' AND post_time <= NOW()
-        ORDER BY post_time ASC
-        """
-    )
-    rows = cur.fetchall()
-    if not rows:
-        cur.close()
-        conn.close()
-        return
+    """予約済み投稿をInstagramへアップロードするタスク。"""
+    with _get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT id, image_path, caption, post_time, type
+                FROM scheduled_posts
+                WHERE status != 'posted' AND post_time <= NOW()
+                ORDER BY post_time ASC
+                """
+            )
+            rows = cur.fetchall()
 
-    client = InstagramClient()
-    client.login()
+            if not rows:
+                return
 
-    for row in rows:
-        post_id, path, caption, post_time, media_type = row
-        response = client.upload_content(path, caption, media_type)
-        cur.execute(
-            "UPDATE scheduled_posts SET status='posted', response=%s WHERE id=%s",
-            (response, post_id),
-        )
-    conn.commit()
-    cur.close()
-    conn.close()
+            client = InstagramClient()
+            client.login()
+
+            for row in rows:
+                post_id, path, caption, post_time, media_type = row
+                response = client.upload_content(path, caption, media_type)
+                cur.execute(
+                    "UPDATE scheduled_posts SET status='posted', response=%s WHERE id=%s",
+                    (response, post_id),
+                )
+        conn.commit()
 

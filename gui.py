@@ -7,6 +7,7 @@ from posting_time_recommender import recommend_posting_times
 
 
 def choose_file(entry: Entry) -> None:
+    """ファイル選択ダイアログを開き、選択したパスを入力欄に設定する。"""
     path = filedialog.askopenfilename()
     if path:
         entry.delete(0, 'end')
@@ -14,6 +15,7 @@ def choose_file(entry: Entry) -> None:
 
 
 def schedule_post(path_entry: Entry, caption_entry: Entry, date_entry: Entry, type_var: StringVar, result_label: Label) -> None:
+    """入力内容を読み込み、投稿をデータベースへ登録する。"""
     image_path = path_entry.get()
     caption = caption_entry.get()
     date_str = date_entry.get()
@@ -33,6 +35,7 @@ def schedule_post(path_entry: Entry, caption_entry: Entry, date_entry: Entry, ty
 
 
 def show_recommendations(csv_entry: Entry, result_label: Label) -> None:
+    """CSV を読み込み、最適な投稿時間を表示する。"""
     csv_path = csv_entry.get()
     if not os.path.exists(csv_path):
         result_label.config(text='CSVファイルが見つかりません', fg='red')
@@ -45,6 +48,7 @@ def show_recommendations(csv_entry: Entry, result_label: Label) -> None:
 
 
 def main() -> None:
+    """Tkinter ベースの簡易GUIを起動する。"""
     root = Tk()
     root.title('Instagram投稿スケジューラー')
 
