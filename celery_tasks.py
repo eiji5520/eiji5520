@@ -22,6 +22,22 @@ def _get_connection():
     return psycopg2.connect(DATABASE_URL)
 
 
+def add_scheduled_post(image_path: str, caption: str, post_time: datetime, media_type: str) -> None:
+    """Insert a new post into the scheduled_posts table."""
+    conn = _get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        INSERT INTO scheduled_posts (image_path, caption, post_time, type, status)
+        VALUES (%s, %s, %s, %s, 'pending')
+        """,
+        (image_path, caption, post_time, media_type),
+    )
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
 @app.task
 def process_scheduled_posts():
     """Upload scheduled posts to Instagram."""
