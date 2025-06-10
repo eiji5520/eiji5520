@@ -68,7 +68,7 @@ export default function Dashboard() {
               </thead>
               <tbody>
                 {actions.map((a, i) => (
-                  <tr key={i} className="border-b">
+                  <tr key={a.id || i} className="border-b">
                     <td className="p-2">{a.date}</td>
                     <td className="p-2 capitalize">{a.type}</td>
                     <td className="p-2">{a.status}</td>
@@ -112,6 +112,7 @@ export default function Dashboard() {
               name="caption"
               value={form.caption}
               onChange={handleChange}
+              placeholder="キャプションを入力してください"
               className="mt-1 p-2 w-full border rounded"
             />
           </label>
