@@ -24,5 +24,8 @@ Each feature is represented by a separate module in the `src` directory. You wil
    ```bash
    python -m src.dashboard_gui
    ```
+   Use the **File → Login** menu option to open a browser and log in to Twitter
+   so cookies are saved for automated tasks. Within the *Schedules* tab you can
+   add tweets with the desired datetime and content.
 
 **Note:** Selenium requires a compatible web driver (e.g., ChromeDriver or GeckoDriver) installed and available in your system PATH.

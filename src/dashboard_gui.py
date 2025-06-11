@@ -76,7 +76,7 @@ class DashboardGUI:
         return [[ml]]
 
     def _menu(self) -> list[list[sg.Menu]]:
-        menu_def = [["File", ["Refresh", "Exit"]]]
+        menu_def = [["File", ["Login", "Refresh", "Exit"]]]
         return [[sg.Menu(menu_def)]]
 
     def _build_window(self, schedule_data: list[list[str]], followers_data: list[str]) -> sg.Window:
@@ -173,6 +173,16 @@ class DashboardGUI:
             except Exception:  # pragma: no cover - best effort
                 pass
 
+    def _login(self) -> None:
+        """Open a browser for the user to log in and save cookies."""
+        driver = scheduler.webdriver.Chrome()
+        try:
+            sched = scheduler.TweetScheduler(driver)
+            sched.load_session()
+            sg.popup("Login cookies saved.")
+        finally:
+            driver.quit()
+
     def _add_schedule(self) -> None:
         layout = [
             [sg.Text("Datetime (YYYY-MM-DD HH:MM)"), sg.Input(key="-DT-")],
@@ -238,6 +248,8 @@ class DashboardGUI:
             event, values = self.window.read(timeout=100)
             if event in (sg.WIN_CLOSED, "Exit"):
                 break
+            if event == "Login":
+                self._login()
             if event == "Refresh":
                 self._refresh()
             if event == "Add":
