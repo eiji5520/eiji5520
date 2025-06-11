@@ -1,0 +1,7 @@
+selenium
+schedule
+pandas
+requests
+matplotlib
+
+PySimpleGUI
