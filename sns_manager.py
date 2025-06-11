@@ -1,6 +1,9 @@
 import PySimpleGUI as sg
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import WebDriverException
 import schedule
 import threading
@@ -45,12 +48,17 @@ class SNSManager:
     def login(self, url, username, password):
         try:
             self.driver.get(url)
-            self.random_delay()
-            # The following selectors are placeholders and need to be adjusted
-            self.driver.find_element(By.NAME, 'session[username_or_email]').send_keys(username)
-            self.driver.find_element(By.NAME, 'session[password]').send_keys(password)
-            self.random_delay()
-            self.driver.find_element(By.CSS_SELECTOR, 'div[data-testid="LoginForm_Login_Button"]').click()
+            wait = WebDriverWait(self.driver, 15)
+
+            # Twitter's login flow may require entering the username first and then clicking Next
+            user_field = wait.until(EC.presence_of_element_located((By.NAME, 'text')))
+            user_field.send_keys(username)
+            user_field.send_keys(Keys.ENTER)
+
+            pass_field = wait.until(EC.presence_of_element_located((By.NAME, 'password')))
+            pass_field.send_keys(password)
+            pass_field.send_keys(Keys.ENTER)
+
             self.random_delay()
             self.logged_in = True
             logging.info('Logged in successfully')

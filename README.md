@@ -9,7 +9,7 @@ This is a simple desktop application for automating basic SNS operations such as
 - **Follow/Unfollow** automation.
 - **Follower Count Tracking** stored locally and shown in the GUI.
 
-The example selectors are written for Twitter and may need to be adjusted for other services or if Twitter updates its page structure.
+The example selectors are written for Twitter and may need to be adjusted if Twitter changes its page structure.  If elements cannot be found during login, update the selectors in `sns_manager.py`.
 
 ## Requirements
 - Python 3.8+
