@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+instagrapi
+pillow
+moviepy
+pyotp
+cryptography
+httpx
+jinja2
