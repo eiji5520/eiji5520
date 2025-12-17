@@ -5,20 +5,22 @@ import { Settings } from './components/Settings';
 import { BannerAd } from './components/BannerAd';
 import { useSudoku } from './hooks/useSudoku';
 import { usePurchase } from './hooks/usePurchase';
+import { DIFFICULTY_LABELS } from './types';
 import './App.css';
 
 function App() {
   const {
     grid,
     selectedCell,
-    puzzleIndex,
-    puzzleCount,
+    difficulty,
     isCompleted,
     isLoading,
+    isGenerating,
     selectCell,
     inputValue,
     resetGame,
-    nextPuzzle,
+    newPuzzle,
+    changeDifficulty,
   } = useSudoku();
 
   const { adsRemoved } = usePurchase();
@@ -27,7 +29,7 @@ function App() {
   // キーボード入力のハンドリング
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (settingsOpen) return;
+      if (settingsOpen || isGenerating) return;
 
       // 数字キー (1-9)
       if (e.key >= '1' && e.key <= '9') {
@@ -64,7 +66,7 @@ function App() {
         selectCell(row, col);
       }
     },
-    [inputValue, selectCell, selectedCell, settingsOpen]
+    [inputValue, selectCell, selectedCell, settingsOpen, isGenerating]
   );
 
   useEffect(() => {
@@ -75,7 +77,9 @@ function App() {
   if (isLoading) {
     return (
       <div className="app">
-        <div className="loading">Loading...</div>
+        <div className="loading">
+          {isGenerating ? 'Generating puzzle...' : 'Loading...'}
+        </div>
       </div>
     );
   }
@@ -84,6 +88,7 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1>Sudoku</h1>
+        <span className="current-difficulty">{DIFFICULTY_LABELS[difficulty]}</span>
         <button
           className="settings-button"
           onClick={() => setSettingsOpen(true)}
@@ -109,9 +114,10 @@ function App() {
         <Controls
           onInput={inputValue}
           onReset={resetGame}
-          onNextPuzzle={nextPuzzle}
-          puzzleIndex={puzzleIndex}
-          puzzleCount={puzzleCount}
+          onNewPuzzle={newPuzzle}
+          onChangeDifficulty={changeDifficulty}
+          difficulty={difficulty}
+          isGenerating={isGenerating}
         />
       </main>
 

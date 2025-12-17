@@ -4,6 +4,58 @@
   margin: 20px auto 0;
 }
 
+/* 難易度選択 */
+.difficulty-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.difficulty-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #666;
+}
+
+.difficulty-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.difficulty-button {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background-color: #f0f0f0;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.difficulty-button:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.difficulty-button.active {
+  background-color: #4a90d9;
+  color: #fff;
+  border-color: #357abd;
+}
+
+.difficulty-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 数字パッド */
 .number-pad {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
@@ -23,15 +75,21 @@
   transition: all 0.15s ease;
 }
 
-.number-button:hover {
+.number-button:hover:not(:disabled) {
   background-color: #4a90d9;
   color: #fff;
 }
 
-.number-button:active {
+.number-button:active:not(:disabled) {
   transform: scale(0.95);
 }
 
+.number-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* アクションボタン */
 .action-buttons {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -48,8 +106,13 @@
   transition: all 0.15s ease;
 }
 
-.action-button:active {
+.action-button:active:not(:disabled) {
   transform: scale(0.98);
+}
+
+.action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .delete-button {
@@ -57,7 +120,7 @@
   color: #721c24;
 }
 
-.delete-button:hover {
+.delete-button:hover:not(:disabled) {
   background-color: #f5c6cb;
 }
 
@@ -66,15 +129,28 @@
   color: #856404;
 }
 
-.reset-button:hover {
+.reset-button:hover:not(:disabled) {
   background-color: #ffeeba;
 }
 
-.next-button {
+.new-button {
   background-color: #d4edda;
   color: #155724;
 }
 
-.next-button:hover {
+.new-button:hover:not(:disabled) {
   background-color: #c3e6cb;
+}
+
+/* レスポンシブ */
+@media (max-width: 400px) {
+  .difficulty-selector {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .difficulty-button {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
 }

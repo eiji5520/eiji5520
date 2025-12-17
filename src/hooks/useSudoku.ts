@@ -1,12 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
-import type { Grid, Cell, Puzzle, PuzzleData, GameState } from '../types';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import type { Grid, Cell, GameState, Difficulty } from '../types';
 import { STORAGE_KEYS } from '../types';
+import { generatePuzzle } from '../services/sudokuGenerator';
 
 /**
- * パズルデータからGridを生成
+ * 数値配列からGridを生成
  */
-function createGrid(puzzle: Puzzle): Grid {
-  return puzzle.grid.map((row) =>
+function createGridFromNumbers(numbers: number[][]): Grid {
+  return numbers.map((row) =>
     row.map((value): Cell => ({
       value: value === 0 ? null : value,
       isInitial: value !== 0,
@@ -46,13 +47,17 @@ function checkCompletion(grid: Grid, solution: number[][]): boolean {
 }
 
 export function useSudoku() {
-  const [puzzles, setPuzzles] = useState<Puzzle[]>([]);
   const [grid, setGrid] = useState<Grid>([]);
+  const [initialGrid, setInitialGrid] = useState<number[][]>([]);
   const [solution, setSolution] = useState<number[][]>([]);
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
-  const [puzzleIndex, setPuzzleIndex] = useState(0);
+  const [difficulty, setDifficulty] = useState<Difficulty>('easy');
   const [isCompleted, setIsCompleted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  // 初期化済みフラグ（二重初期化防止）
+  const initialized = useRef(false);
 
   /**
    * localStorageから状態を読み込む
@@ -72,67 +77,87 @@ export function useSudoku() {
   /**
    * localStorageに状態を保存
    */
-  const saveToStorage = useCallback((state: Partial<GameState>) => {
+  const saveToStorage = useCallback((state: GameState) => {
     try {
-      const currentState = loadFromStorage() || {};
-      const newState = { ...currentState, ...state };
-      localStorage.setItem(STORAGE_KEYS.GAME_STATE, JSON.stringify(newState));
+      localStorage.setItem(STORAGE_KEYS.GAME_STATE, JSON.stringify(state));
     } catch (error) {
       console.error('Failed to save game state:', error);
     }
-  }, [loadFromStorage]);
+  }, []);
 
   /**
-   * パズルデータを読み込む
+   * 新しいゲームを開始（自動生成）
    */
-  useEffect(() => {
-    async function loadPuzzles() {
+  const startNewGame = useCallback((newDifficulty: Difficulty) => {
+    setIsGenerating(true);
+
+    // UIをブロックしないよう次フレームで実行
+    setTimeout(() => {
       try {
-        const response = await fetch('/puzzles/easy.json');
-        const data: PuzzleData = await response.json();
-        setPuzzles(data.puzzles);
+        const puzzle = generatePuzzle(newDifficulty);
 
-        // localStorageから状態を復元
-        const savedState = loadFromStorage();
+        setInitialGrid(puzzle.grid);
+        setSolution(puzzle.solution);
+        setGrid(createGridFromNumbers(puzzle.grid));
+        setDifficulty(newDifficulty);
+        setSelectedCell(null);
+        setIsCompleted(false);
 
-        if (savedState && savedState.grid && savedState.grid.length > 0) {
-          // 保存された状態を復元
-          const idx = savedState.puzzleIndex || 0;
-          setPuzzleIndex(idx);
-          setGrid(savedState.grid);
-          setSolution(savedState.solution || data.puzzles[idx].solution);
-          setIsCompleted(savedState.isCompleted || false);
-        } else {
-          // 新規ゲーム開始
-          const puzzle = data.puzzles[0];
-          setGrid(createGrid(puzzle));
-          setSolution(puzzle.solution);
-        }
-
-        setIsLoading(false);
+        console.log(`[Sudoku] Generated ${newDifficulty} puzzle with ${puzzle.blankCount} blanks`);
       } catch (error) {
-        console.error('Failed to load puzzles:', error);
+        console.error('Failed to generate puzzle:', error);
+      } finally {
+        setIsGenerating(false);
         setIsLoading(false);
       }
-    }
+    }, 10);
+  }, []);
 
-    loadPuzzles();
-  }, [loadFromStorage]);
+  /**
+   * 初期化：localStorageから復元または新規生成
+   */
+  useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
+
+    const savedState = loadFromStorage();
+
+    if (
+      savedState &&
+      savedState.grid &&
+      savedState.grid.length > 0 &&
+      savedState.initialGrid &&
+      savedState.solution
+    ) {
+      // 保存された状態を復元
+      setGrid(savedState.grid);
+      setInitialGrid(savedState.initialGrid);
+      setSolution(savedState.solution);
+      setDifficulty(savedState.difficulty || 'easy');
+      setIsCompleted(savedState.isCompleted || false);
+      setIsLoading(false);
+      console.log('[Sudoku] Restored game from localStorage');
+    } else {
+      // 新規ゲーム開始
+      startNewGame('easy');
+    }
+  }, [loadFromStorage, startNewGame]);
 
   /**
    * 状態が変わったら保存
    */
   useEffect(() => {
-    if (!isLoading && grid.length > 0) {
+    if (!isLoading && !isGenerating && grid.length > 0 && initialGrid.length > 0) {
       saveToStorage({
         grid,
+        initialGrid,
         solution,
         selectedCell,
-        puzzleIndex,
+        difficulty,
         isCompleted,
       });
     }
-  }, [grid, solution, selectedCell, puzzleIndex, isCompleted, isLoading, saveToStorage]);
+  }, [grid, initialGrid, solution, selectedCell, difficulty, isCompleted, isLoading, isGenerating, saveToStorage]);
 
   /**
    * セルを選択
@@ -148,10 +173,10 @@ export function useSudoku() {
     if (!selectedCell) return;
 
     const { row, col } = selectedCell;
-    const cell = grid[row][col];
+    const cell = grid[row]?.[col];
 
     // 初期セルは編集不可
-    if (cell.isInitial) return;
+    if (!cell || cell.isInitial) return;
 
     setGrid(prevGrid => {
       const newGrid = prevGrid.map(r => r.map(c => ({ ...c })));
@@ -178,55 +203,44 @@ export function useSudoku() {
    * ゲームをリセット（現在のパズルをやり直し）
    */
   const resetGame = useCallback(() => {
-    if (puzzles.length === 0) return;
+    if (initialGrid.length === 0) return;
 
-    const puzzle = puzzles[puzzleIndex];
-    setGrid(createGrid(puzzle));
+    setGrid(createGridFromNumbers(initialGrid));
     setSelectedCell(null);
     setIsCompleted(false);
-  }, [puzzles, puzzleIndex]);
+  }, [initialGrid]);
 
   /**
-   * 次のパズルに切り替え
+   * 新しいパズルを生成（現在の難易度で）
    */
-  const nextPuzzle = useCallback(() => {
-    if (puzzles.length === 0) return;
-
-    const nextIndex = (puzzleIndex + 1) % puzzles.length;
-    const puzzle = puzzles[nextIndex];
-
-    setPuzzleIndex(nextIndex);
-    setGrid(createGrid(puzzle));
-    setSolution(puzzle.solution);
-    setSelectedCell(null);
-    setIsCompleted(false);
-  }, [puzzles, puzzleIndex]);
+  const newPuzzle = useCallback(() => {
+    startNewGame(difficulty);
+  }, [difficulty, startNewGame]);
 
   /**
-   * 特定のパズルに切り替え
+   * 難易度を変更して新しいパズルを生成
    */
-  const selectPuzzle = useCallback((index: number) => {
-    if (index < 0 || index >= puzzles.length) return;
-
-    const puzzle = puzzles[index];
-    setPuzzleIndex(index);
-    setGrid(createGrid(puzzle));
-    setSolution(puzzle.solution);
-    setSelectedCell(null);
-    setIsCompleted(false);
-  }, [puzzles]);
+  const changeDifficulty = useCallback((newDifficulty: Difficulty) => {
+    if (newDifficulty === difficulty && grid.length > 0) {
+      // 同じ難易度で新規生成
+      startNewGame(newDifficulty);
+    } else {
+      // 難易度変更
+      startNewGame(newDifficulty);
+    }
+  }, [difficulty, grid.length, startNewGame]);
 
   return {
     grid,
     selectedCell,
-    puzzleIndex,
-    puzzleCount: puzzles.length,
+    difficulty,
     isCompleted,
-    isLoading,
+    isLoading: isLoading || isGenerating,
+    isGenerating,
     selectCell,
     inputValue,
     resetGame,
-    nextPuzzle,
-    selectPuzzle,
+    newPuzzle,
+    changeDifficulty,
   };
 }
