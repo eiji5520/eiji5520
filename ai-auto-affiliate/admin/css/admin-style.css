@@ -1,0 +1,400 @@
+/**
+ * AI Auto Affiliate - Admin Styles
+ *
+ * @package AI_Auto_Affiliate
+ */
+
+/* ==========================================================================
+   共通スタイル
+   ========================================================================== */
+
+.aaa-wrap {
+    max-width: 1200px;
+    margin: 20px 20px 0 0;
+}
+
+.aaa-wrap h1 {
+    font-size: 23px;
+    font-weight: 400;
+    margin: 0 0 20px;
+    padding: 9px 0 4px;
+    line-height: 1.3;
+}
+
+.aaa-card {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.aaa-card h2 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/* ==========================================================================
+   設定ページ
+   ========================================================================== */
+
+.aaa-settings-form .form-table th {
+    width: 200px;
+    padding: 20px 10px 20px 0;
+}
+
+.aaa-settings-form .form-table td {
+    padding: 15px 10px;
+}
+
+.aaa-settings-form input[type="text"],
+.aaa-settings-form input[type="password"],
+.aaa-settings-form input[type="number"],
+.aaa-settings-form select {
+    width: 100%;
+    max-width: 400px;
+}
+
+.aaa-settings-form textarea {
+    width: 100%;
+    max-width: 600px;
+    min-height: 150px;
+    font-family: monospace;
+}
+
+.aaa-api-key-field {
+    position: relative;
+}
+
+.aaa-api-key-field input {
+    padding-right: 80px;
+}
+
+.aaa-api-key-toggle {
+    position: absolute;
+    right: 410px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #2271b1;
+    font-size: 12px;
+}
+
+.aaa-api-key-toggle:hover {
+    color: #135e96;
+}
+
+.aaa-description {
+    color: #646970;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+/* ==========================================================================
+   A8ショートコード管理
+   ========================================================================== */
+
+.aaa-shortcode-list {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.aaa-shortcode-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    background: #f9f9f9;
+}
+
+.aaa-shortcode-item:last-child {
+    border-bottom: none;
+}
+
+.aaa-shortcode-item:nth-child(even) {
+    background: #fff;
+}
+
+.aaa-shortcode-info {
+    flex: 1;
+}
+
+.aaa-shortcode-slug {
+    font-family: monospace;
+    background: #e7e7e7;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    margin-right: 10px;
+}
+
+.aaa-shortcode-name {
+    font-weight: 600;
+}
+
+.aaa-shortcode-code {
+    font-family: monospace;
+    font-size: 11px;
+    color: #666;
+    margin-top: 5px;
+    word-break: break-all;
+}
+
+.aaa-shortcode-actions {
+    margin-left: 15px;
+}
+
+.aaa-shortcode-empty {
+    padding: 30px;
+    text-align: center;
+    color: #666;
+}
+
+/* 新規追加フォーム */
+.aaa-add-shortcode {
+    background: #f0f6fc;
+    padding: 20px;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+.aaa-add-shortcode h3 {
+    margin: 0 0 15px;
+    font-size: 14px;
+}
+
+.aaa-add-shortcode .form-row {
+    margin-bottom: 15px;
+}
+
+.aaa-add-shortcode label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.aaa-add-shortcode input[type="text"],
+.aaa-add-shortcode textarea {
+    width: 100%;
+}
+
+.aaa-add-shortcode textarea {
+    min-height: 80px;
+}
+
+/* ==========================================================================
+   生成ページ
+   ========================================================================== */
+
+.aaa-generator-form {
+    max-width: 800px;
+}
+
+.aaa-generator-form .form-row {
+    margin-bottom: 20px;
+}
+
+.aaa-generator-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.aaa-generator-form input[type="text"],
+.aaa-generator-form select,
+.aaa-generator-form textarea {
+    width: 100%;
+}
+
+.aaa-generator-form textarea {
+    min-height: 100px;
+}
+
+.aaa-inline-fields {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.aaa-inline-fields .form-row {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* 生成ボタン */
+.aaa-generate-btn {
+    background: #2271b1;
+    border-color: #2271b1;
+    color: #fff;
+    padding: 10px 30px;
+    font-size: 14px;
+    height: auto;
+}
+
+.aaa-generate-btn:hover {
+    background: #135e96;
+    border-color: #135e96;
+    color: #fff;
+}
+
+.aaa-generate-btn:disabled {
+    background: #a0a5aa;
+    border-color: #a0a5aa;
+    cursor: not-allowed;
+}
+
+/* 生成中表示 */
+.aaa-generating {
+    display: none;
+    align-items: center;
+    padding: 20px;
+    background: #f0f6fc;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+.aaa-generating.active {
+    display: flex;
+}
+
+.aaa-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #2271b1;
+    border-radius: 50%;
+    animation: aaa-spin 1s linear infinite;
+    margin-right: 15px;
+}
+
+@keyframes aaa-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.aaa-generating-text {
+    font-size: 14px;
+    color: #1d2327;
+}
+
+/* 結果表示 */
+.aaa-result {
+    display: none;
+    padding: 20px;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+.aaa-result.active {
+    display: block;
+}
+
+.aaa-result.success {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.aaa-result.error {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.aaa-result h3 {
+    margin: 0 0 10px;
+}
+
+.aaa-result-link {
+    margin-top: 15px;
+}
+
+.aaa-result-link a {
+    display: inline-block;
+    background: #2271b1;
+    color: #fff;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.aaa-result-link a:hover {
+    background: #135e96;
+    color: #fff;
+}
+
+/* ==========================================================================
+   メッセージ
+   ========================================================================== */
+
+.aaa-notice {
+    padding: 12px 15px;
+    margin: 15px 0;
+    border-left: 4px solid;
+    background: #fff;
+}
+
+.aaa-notice.notice-success {
+    border-left-color: #00a32a;
+    background: #d4edda;
+}
+
+.aaa-notice.notice-error {
+    border-left-color: #d63638;
+    background: #f8d7da;
+}
+
+.aaa-notice.notice-warning {
+    border-left-color: #dba617;
+    background: #fff3cd;
+}
+
+.aaa-notice.notice-info {
+    border-left-color: #72aee6;
+    background: #e7f3ff;
+}
+
+/* ==========================================================================
+   レスポンシブ
+   ========================================================================== */
+
+@media screen and (max-width: 782px) {
+    .aaa-settings-form .form-table th {
+        width: auto;
+        display: block;
+        padding-bottom: 5px;
+    }
+
+    .aaa-settings-form .form-table td {
+        display: block;
+        padding-left: 0;
+    }
+
+    .aaa-settings-form input[type="text"],
+    .aaa-settings-form input[type="password"],
+    .aaa-settings-form input[type="number"],
+    .aaa-settings-form select,
+    .aaa-settings-form textarea {
+        max-width: 100%;
+    }
+
+    .aaa-shortcode-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .aaa-shortcode-actions {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .aaa-inline-fields {
+        flex-direction: column;
+    }
+}
