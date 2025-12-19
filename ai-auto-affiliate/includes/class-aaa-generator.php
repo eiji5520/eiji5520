@@ -370,14 +370,27 @@ class AAA_Generator {
      */
     private function generate_and_save_draft( $keyword, $category, $tags, $a8_slot, $settings ) {
         // ============================================
-        // Step D: ダミー本文で保存（AI APIはStep Eで実装）
+        // Claude API で記事を生成
         // ============================================
 
-        // タイトル生成（暫定：キーワードからシンプルに作成）
-        $title = $this->generate_title_from_keyword( $keyword );
+        // プロバイダーを初期化
+        $provider = new AAA_Provider_Claude();
 
-        // ダミー本文（Step Eで実際のAI生成に置き換え）
-        $content = $this->generate_dummy_content( $keyword, $settings );
+        // 記事を生成
+        $result = $provider->generate_article( array(
+            'keyword' => $keyword,
+            'a8_slot' => $a8_slot,
+        ) );
+
+        // エラーチェック
+        if ( ! $result['ok'] ) {
+            return new WP_Error( 'generation_failed', $result['error'] );
+        }
+
+        // 生成結果から取得
+        $title   = $result['title'];
+        $content = $result['content'];
+        $related = isset( $result['related'] ) ? $result['related'] : array();
 
         // 投稿データ
         $post_data = array(
@@ -418,11 +431,16 @@ class AAA_Generator {
             update_post_meta( $post_id, '_aaa_a8_slot', $a8_slot );
         }
 
+        // 関連記事候補を保存
+        if ( ! empty( $related ) ) {
+            update_post_meta( $post_id, '_aaa_related_articles', $related );
+        }
+
         return $post_id;
     }
 
     /**
-     * キーワードからタイトルを生成（暫定）
+     * キーワードからタイトルを生成（フォールバック用）
      *
      * @param string $keyword キーワード
      * @return string タイトル
@@ -438,51 +456,6 @@ class AAA_Generator {
         }
 
         return $first_line . 'について徹底解説';
-    }
-
-    /**
-     * ダミー本文を生成（Step E実装まで）
-     *
-     * @param string $keyword  キーワード
-     * @param array  $settings 設定値
-     * @return string 本文
-     */
-    private function generate_dummy_content( $keyword, $settings ) {
-        $keyword_escaped = esc_html( $keyword );
-
-        $content = <<<HTML
-<!-- この記事はAI Auto Affiliateで生成されました -->
-<!-- Step D: ダミーコンテンツ（Step EでAI生成に置き換わります） -->
-
-<h2>はじめに</h2>
-<p>この記事は「{$keyword_escaped}」について解説します。</p>
-<p><strong>※この内容はダミーです。実際のAI生成はStep Eで実装されます。</strong></p>
-
-<h2>結論</h2>
-<p>「{$keyword_escaped}」に関する結論がここに入ります。</p>
-
-<h2>原因・背景</h2>
-<p>問題の原因や背景についての説明がここに入ります。</p>
-
-<h2>すぐできる対処法</h2>
-<ul>
-<li>対処法1の説明</li>
-<li>対処法2の説明</li>
-<li>対処法3の説明</li>
-</ul>
-
-<h2>注意点</h2>
-<p>対処する際の注意点がここに入ります。</p>
-
-<h2>おすすめの解決策</h2>
-<!-- {{AD_INSERTION_POINT}} - Step Fで広告が挿入されます -->
-<p>おすすめの解決策についての説明がここに入ります。</p>
-
-<h2>まとめ</h2>
-<p>この記事では「{$keyword_escaped}」について解説しました。</p>
-HTML;
-
-        return $content;
     }
 
     /**

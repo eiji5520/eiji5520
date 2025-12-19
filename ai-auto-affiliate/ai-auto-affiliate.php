@@ -191,7 +191,7 @@ function aaa_load_classes() {
     $classes = array(
         'class-aaa-logger.php',
         'class-aaa-settings.php',
-        'class-aaa-api-client.php',
+        'class-aaa-provider-claude.php',
         'class-aaa-post-creator.php',
         'class-aaa-generator.php',
     );
