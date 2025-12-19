@@ -263,7 +263,7 @@ class AAA_Settings {
 
         // 新規ショートコード追加
         if ( ! empty( $input['new_a8_slug'] ) && ! empty( $input['new_a8_name'] ) && ! empty( $input['new_a8_code'] ) ) {
-            $new_slug = sanitize_title( $input['new_a8_slug'] );
+            $new_slug = sanitize_key( $input['new_a8_slug'] );
             $new_name = sanitize_text_field( $input['new_a8_name'] );
             $new_code = wp_kses_post( $input['new_a8_code'] ); // HTMLを許可
 
@@ -619,8 +619,8 @@ class AAA_Settings {
         }
 
         // パラメータ取得
-        $slug  = isset( $_POST['slug'] ) ? sanitize_title( $_POST['slug'] ) : '';
-        $nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( $_POST['nonce'] ) : '';
+        $slug  = isset( $_POST['slug'] ) ? sanitize_key( wp_unslash( $_POST['slug'] ) ) : '';
+        $nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
 
         // nonceチェック
         if ( ! wp_verify_nonce( $nonce, 'aaa_delete_shortcode_' . $slug ) ) {
