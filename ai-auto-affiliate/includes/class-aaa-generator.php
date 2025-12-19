@@ -392,6 +392,27 @@ class AAA_Generator {
         $content = $result['content'];
         $related = isset( $result['related'] ) ? $result['related'] : array();
 
+        // ============================================
+        // 広告挿入処理
+        // ============================================
+        if ( ! empty( $a8_slot ) ) {
+            $slot_code = $this->get_a8_slot_code( $a8_slot, $settings );
+
+            if ( ! empty( $slot_code ) ) {
+                $pr_enabled = isset( $settings['show_pr_label'] ) ? $settings['show_pr_label'] : true;
+                $content    = $this->inject_affiliate_block( $content, $slot_code, $pr_enabled, $settings );
+
+                $this->log_info( '広告を挿入しました', array(
+                    'slot' => $a8_slot,
+                    'pr_enabled' => $pr_enabled,
+                ) );
+            }
+        }
+
+        // ============================================
+        // 下書き投稿を作成（公開禁止）
+        // ============================================
+
         // 投稿データ
         $post_data = array(
             'post_title'   => $title,
@@ -426,7 +447,7 @@ class AAA_Generator {
         update_post_meta( $post_id, '_aaa_generated', '1' );
         update_post_meta( $post_id, '_aaa_keyword', $keyword );
 
-        // A8スロット情報を保存（Step Fで広告挿入時に使用）
+        // A8スロット情報を保存
         if ( ! empty( $a8_slot ) ) {
             update_post_meta( $post_id, '_aaa_a8_slot', $a8_slot );
         }
@@ -506,5 +527,167 @@ class AAA_Generator {
         if ( class_exists( 'AAA_Logger' ) ) {
             AAA_Logger::get_instance()->error( $message, $context );
         }
+    }
+
+    /**
+     * A8スロットのコードを取得
+     *
+     * @param string $slug     スロットslug
+     * @param array  $settings 設定値
+     * @return string ショートコード（見つからない場合は空文字）
+     */
+    private function get_a8_slot_code( $slug, $settings ) {
+        $a8_slots = isset( $settings['a8_slots'] ) ? $settings['a8_slots'] : array();
+
+        foreach ( $a8_slots as $slot ) {
+            if ( isset( $slot['slug'] ) && $slot['slug'] === $slug ) {
+                return isset( $slot['code'] ) ? $slot['code'] : '';
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * 広告ブロックを本文に挿入（1回のみ）
+     *
+     * 挿入位置の優先順位：
+     * 1. 「## 注意点」セクションの直後
+     * 2. 「## まとめ」セクションの直前
+     * 3. 本文の末尾
+     *
+     * @param string $content    本文（Markdown）
+     * @param string $slot_code  ショートコード
+     * @param bool   $pr_enabled PR表記を表示するか
+     * @param array  $settings   設定値
+     * @return string 広告挿入後の本文
+     */
+    private function inject_affiliate_block( $content, $slot_code, $pr_enabled, $settings ) {
+        // ============================================
+        // 1. 既存の広告ショートコードを除去（1回だけ挿入を保証）
+        // ============================================
+        $content = $this->remove_existing_shortcodes( $content, $settings );
+
+        // ============================================
+        // 2. 広告ブロックを作成
+        // ============================================
+        $ad_block = $this->build_affiliate_block( $slot_code, $pr_enabled );
+
+        // ============================================
+        // 3. 挿入位置を決定して挿入
+        // ============================================
+        $content = $this->insert_ad_at_position( $content, $ad_block );
+
+        return $content;
+    }
+
+    /**
+     * 既存のショートコードを本文から除去
+     *
+     * @param string $content  本文
+     * @param array  $settings 設定値
+     * @return string 除去後の本文
+     */
+    private function remove_existing_shortcodes( $content, $settings ) {
+        $a8_slots = isset( $settings['a8_slots'] ) ? $settings['a8_slots'] : array();
+
+        // 登録済みの各ショートコードを除去
+        foreach ( $a8_slots as $slot ) {
+            if ( ! empty( $slot['code'] ) ) {
+                // 完全一致で除去
+                $content = str_replace( $slot['code'], '', $content );
+            }
+        }
+
+        // 一般的なA8ショートコードパターンを除去
+        // [a8 ...] または [a8_...] 形式
+        $content = preg_replace( '/\[a8[^\]]*\].*?\[\/a8[^\]]*\]/s', '', $content );
+        $content = preg_replace( '/\[a8[^\]]*\]/s', '', $content );
+
+        // PR表記の重複も除去
+        $content = preg_replace( '/※PRを含みます\s*/u', '', $content );
+
+        // 空行の重複を整理
+        $content = preg_replace( '/\n{3,}/', "\n\n", $content );
+
+        return trim( $content );
+    }
+
+    /**
+     * 広告ブロックを構築
+     *
+     * @param string $slot_code  ショートコード
+     * @param bool   $pr_enabled PR表記を表示するか
+     * @return string 広告ブロック
+     */
+    private function build_affiliate_block( $slot_code, $pr_enabled ) {
+        $lines = array();
+
+        // PR表記（有効な場合）
+        if ( $pr_enabled ) {
+            $lines[] = '※PRを含みます';
+            $lines[] = '';
+        }
+
+        // 自然な導入文
+        $lines[] = 'もし作業を効率化したい場合は、以下のサービスも参考にしてみてください。';
+        $lines[] = '';
+
+        // ショートコード
+        $lines[] = $slot_code;
+
+        return implode( "\n", $lines );
+    }
+
+    /**
+     * 広告を適切な位置に挿入
+     *
+     * @param string $content  本文
+     * @param string $ad_block 広告ブロック
+     * @return string 挿入後の本文
+     */
+    private function insert_ad_at_position( $content, $ad_block ) {
+        // ============================================
+        // 優先度1: 「## 注意点」セクションの直後
+        // ============================================
+        $patterns_after = array(
+            '/^(##\s*注意点.*?)(\n##\s)/mu',  // 次の見出しの前
+            '/^(##\s*注意点[^\n]*\n(?:(?!##).+\n)*)/mu', // 注意点セクション全体
+        );
+
+        foreach ( $patterns_after as $pattern ) {
+            if ( preg_match( $pattern, $content, $matches, PREG_OFFSET_CAPTURE ) ) {
+                $section_end = $matches[1][1] + strlen( $matches[1][0] );
+
+                // 次の見出しを探す
+                $rest_content = substr( $content, $section_end );
+                if ( preg_match( '/^(\s*)(##\s)/m', $rest_content, $next_match, PREG_OFFSET_CAPTURE ) ) {
+                    $insert_pos = $section_end + $next_match[1][1];
+                    return substr( $content, 0, $insert_pos ) . "\n" . $ad_block . "\n\n" . substr( $content, $insert_pos );
+                }
+            }
+        }
+
+        // ============================================
+        // 優先度2: 「## まとめ」セクションの直前
+        // ============================================
+        $summary_patterns = array(
+            '/\n(##\s*まとめ)/u',
+            '/\n(##\s*おわりに)/u',
+            '/\n(##\s*最後に)/u',
+            '/\n(##\s*結論)/u',
+        );
+
+        foreach ( $summary_patterns as $pattern ) {
+            if ( preg_match( $pattern, $content, $matches, PREG_OFFSET_CAPTURE ) ) {
+                $insert_pos = $matches[0][1];
+                return substr( $content, 0, $insert_pos ) . "\n\n" . $ad_block . "\n" . substr( $content, $insert_pos );
+            }
+        }
+
+        // ============================================
+        // 優先度3: 本文の末尾
+        // ============================================
+        return $content . "\n\n" . $ad_block;
     }
 }
