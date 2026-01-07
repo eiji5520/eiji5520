@@ -1,0 +1,489 @@
+/**
+ * Blog Agent Admin Styles
+ *
+ * @package Blog_Agent
+ */
+
+/* Cards */
+.blog-agent-card {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.blog-agent-card h2 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.blog-agent-card h3 {
+    margin-top: 1.5em;
+}
+
+/* Status Grid */
+.blog-agent-status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.status-card {
+    text-align: center;
+    padding: 25px 20px;
+}
+
+.status-card h3 {
+    margin: 0 0 15px;
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #666;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+/* Status Indicators */
+.status-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-dot.active {
+    background: #46b450;
+    box-shadow: 0 0 8px rgba(70, 180, 80, 0.5);
+}
+
+.status-dot.inactive {
+    background: #999;
+}
+
+.status-text {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Status Numbers */
+.status-number {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.status-number .current {
+    color: #0073aa;
+}
+
+.status-number .separator {
+    color: #999;
+    margin: 0 5px;
+}
+
+.status-number .limit {
+    color: #666;
+}
+
+/* Progress Bar */
+.status-bar {
+    background: #e5e5e5;
+    border-radius: 4px;
+    height: 8px;
+    overflow: hidden;
+}
+
+.status-bar-fill {
+    background: #0073aa;
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+/* Queue Stats */
+.queue-stats {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+}
+
+.queue-stat {
+    text-align: center;
+}
+
+.queue-stat .stat-value {
+    display: block;
+    font-size: 24px;
+    font-weight: 600;
+    color: #0073aa;
+}
+
+.queue-stat .stat-label {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+}
+
+/* Status Badges */
+.status-badge,
+.qa-status,
+.approval-status,
+.post-status {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* QA Status Colors */
+.qa-pending {
+    background: #f0f0f1;
+    color: #666;
+}
+
+.qa-passed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.qa-warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.qa-failed {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Approval Status Colors */
+.approval-draft {
+    background: #f0f0f1;
+    color: #666;
+}
+
+.approval-approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+/* Post Status Colors */
+.status-draft,
+.post-status.status-draft {
+    background: #f0f0f1;
+    color: #666;
+}
+
+.status-publish,
+.post-status.status-publish {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-future,
+.post-status.status-future {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.status-pending,
+.post-status.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* Generator Status */
+.status-generated {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-processing {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.status-completed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-cancelled {
+    background: #f0f0f1;
+    color: #666;
+}
+
+/* Quick Actions */
+.quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Buttons */
+.button-danger {
+    background: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: #fff !important;
+}
+
+.button-danger:hover,
+.button-danger:focus {
+    background: #c82333 !important;
+    border-color: #bd2130 !important;
+}
+
+/* Warning Box */
+.blog-agent-warning {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+/* Notice Box */
+.blog-agent-notice {
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.notice-warning {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+}
+
+/* Error Card */
+.status-error {
+    border-color: #dc3545;
+}
+
+.status-error .error-message {
+    color: #721c24;
+    word-break: break-word;
+}
+
+.status-error .error-time {
+    font-size: 12px;
+    color: #999;
+}
+
+/* Tables */
+.blog-agent-dashboard table,
+.blog-agent-qa table,
+.blog-agent-generator table {
+    margin-top: 15px;
+}
+
+/* Article List in Projects */
+.blog-agent-article-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.blog-agent-article-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.blog-agent-article-list li:last-child {
+    border-bottom: none;
+}
+
+/* Plan Display */
+.blog-agent-plan {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.plan-article {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.plan-article h4 {
+    margin: 0 0 10px;
+    color: #0073aa;
+}
+
+.plan-outline {
+    background: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+/* QA Box in Post Edit */
+.blog-agent-qa-box {
+    padding: 10px 0;
+}
+
+.blog-agent-qa-box .qa-status-section,
+.blog-agent-qa-box .approval-section {
+    margin-bottom: 15px;
+}
+
+.blog-agent-qa-box hr {
+    margin: 15px 0;
+    border: none;
+    border-top: 1px solid #eee;
+}
+
+.qa-warnings {
+    background: #fff3cd;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.qa-warnings h4 {
+    margin: 0 0 10px;
+    font-size: 13px;
+}
+
+.qa-warnings ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.qa-warnings li {
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.qa-stats {
+    background: #f0f0f1;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.qa-stats h4 {
+    margin: 0 0 10px;
+    font-size: 13px;
+}
+
+.qa-stats ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.qa-stats li {
+    font-size: 12px;
+}
+
+/* Progress Bar for Generator */
+#generation-progress {
+    background: #f0f0f1;
+    padding: 20px;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+#generation-progress .progress-bar {
+    background: #e5e5e5;
+    border-radius: 4px;
+    height: 20px;
+    overflow: hidden;
+}
+
+#generation-progress .progress-fill {
+    background: #0073aa;
+    height: 100%;
+    width: 0;
+    transition: width 0.3s ease;
+}
+
+#generation-progress .progress-text {
+    margin-top: 10px;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Project Meta */
+.project-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    color: #666;
+}
+
+/* Warning Count */
+.warning-count {
+    cursor: help;
+}
+
+.no-warnings {
+    color: #46b450;
+}
+
+/* Test Result */
+.blog-agent-test-result {
+    margin-left: 10px;
+    font-weight: 500;
+}
+
+.blog-agent-test-result.success {
+    color: #46b450;
+}
+
+.blog-agent-test-result.error {
+    color: #dc3545;
+}
+
+/* Settings Sections */
+.blog-agent-settings .form-table th {
+    width: 200px;
+}
+
+.schedule-settings {
+    transition: opacity 0.3s ease;
+}
+
+/* Responsive */
+@media screen and (max-width: 782px) {
+    .blog-agent-status-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .queue-stats {
+        flex-wrap: wrap;
+    }
+
+    .queue-stat {
+        flex: 0 0 50%;
+        margin-bottom: 10px;
+    }
+
+    .quick-actions {
+        flex-direction: column;
+    }
+
+    .quick-actions .button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .project-meta {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

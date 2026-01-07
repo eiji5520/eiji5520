@@ -1,0 +1,39 @@
+# Copyright (C) 2024 Blog Agent Team
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Blog Agent 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 00:00:00+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"X-Generator: WP-CLI\n"
+"X-Domain: blog-agent\n"
+
+#: blog-agent.php
+msgid "Blog Agent"
+msgstr ""
+
+#: includes/class-settings.php
+msgid "Dashboard"
+msgstr ""
+
+#: includes/class-settings.php
+msgid "Settings"
+msgstr ""
+
+#: includes/class-settings.php
+msgid "AI Provider Settings"
+msgstr ""
+
+#: includes/class-settings.php
+msgid "Auto-Post Settings"
+msgstr ""
+
+#: includes/class-settings.php
+msgid "QA Settings"
+msgstr ""
