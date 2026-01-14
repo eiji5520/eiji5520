@@ -1,0 +1,215 @@
+/**
+ * AI自動投稿 - 管理画面スタイル
+ *
+ * @package AI_AutoPost
+ */
+
+/* 基本レイアウト */
+.ai-autopost-admin {
+    max-width: 1200px;
+}
+
+.ai-autopost-tab-content {
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ccd0d4;
+    border-top: none;
+}
+
+/* セクション */
+.ai-autopost-section {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.ai-autopost-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.ai-autopost-section h2 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #2271b1;
+    display: inline-block;
+}
+
+.ai-autopost-section h3 {
+    margin-top: 20px;
+    color: #1d2327;
+}
+
+/* 必須マーク */
+.required {
+    color: #d63638;
+}
+
+/* コードブロック */
+.ai-autopost-code-block {
+    background: #f0f0f1;
+    padding: 15px;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 10px 0;
+}
+
+.ai-autopost-code-block code {
+    background: transparent;
+    padding: 0;
+    font-size: 13px;
+    word-break: break-all;
+}
+
+/* ログテーブル */
+.ai-autopost-logs {
+    font-size: 13px;
+}
+
+.ai-autopost-logs td {
+    vertical-align: top;
+}
+
+.ai-autopost-logs pre {
+    margin: 10px 0 0;
+    padding: 10px;
+    background: #f6f7f7;
+    border-radius: 4px;
+    font-size: 12px;
+    overflow-x: auto;
+    max-width: 600px;
+}
+
+.ai-autopost-logs details {
+    margin-top: 5px;
+}
+
+.ai-autopost-logs summary {
+    cursor: pointer;
+    color: #2271b1;
+    font-size: 12px;
+}
+
+.ai-autopost-logs summary:hover {
+    text-decoration: underline;
+}
+
+/* ログ種別バッジ */
+.log-type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.log-type-success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.log-type-error {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.log-type-skip {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.log-type-info {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+/* ログ行のハイライト */
+.ai-autopost-logs tr.log-error {
+    background-color: #fff5f5;
+}
+
+.ai-autopost-logs tr.log-success {
+    background-color: #f0fff0;
+}
+
+.ai-autopost-logs tr.log-skip {
+    background-color: #fffbf0;
+}
+
+/* 手順リスト */
+.ai-autopost-steps {
+    background: #f9f9f9;
+    padding: 20px 20px 20px 40px;
+    border-radius: 4px;
+    line-height: 1.8;
+}
+
+.ai-autopost-steps li {
+    margin-bottom: 10px;
+}
+
+.ai-autopost-steps ul {
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+/* 生成フォーム */
+.ai-autopost-generate-form {
+    display: inline-block;
+}
+
+/* インラインnotice */
+.notice.inline {
+    margin: 15px 0;
+}
+
+/* テーブル調整 */
+.form-table th {
+    width: 200px;
+    padding-top: 15px;
+}
+
+.form-table td {
+    padding-top: 10px;
+}
+
+/* レスポンシブ対応 */
+@media screen and (max-width: 782px) {
+    .form-table th {
+        width: auto;
+        display: block;
+        padding-bottom: 5px;
+    }
+
+    .form-table td {
+        display: block;
+        padding-left: 0;
+    }
+
+    .ai-autopost-code-block {
+        font-size: 12px;
+    }
+
+    .ai-autopost-code-block code {
+        font-size: 11px;
+    }
+}
+
+/* ボタン間隔 */
+.ai-autopost-section .button + .button {
+    margin-left: 10px;
+}
+
+/* 警告テキスト */
+.ai-autopost-section .description[style*="color: #d63638"] {
+    font-weight: 500;
+}
+
+/* テーブル内のコード */
+table code {
+    background: #f0f0f1;
+    padding: 2px 6px;
+    border-radius: 3px;
+}
