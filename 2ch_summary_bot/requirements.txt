@@ -1,0 +1,12 @@
+# 5ちゃんねるまとめブログ自動投稿ツール 依存ライブラリ
+# HTTP通信用
+requests>=2.31.0
+
+# HTML解析用
+beautifulsoup4>=4.12.0
+
+# 機密情報管理用
+python-dotenv>=1.0.0
+
+# HTMLパーサー（高速化）
+lxml>=4.9.0
