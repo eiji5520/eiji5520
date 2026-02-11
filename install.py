@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """OpenClaw setup script (Python version of setup.sh)
-Usage: python setup.py
+Usage: python install.py
 """
 
 import os
@@ -102,19 +102,26 @@ def main():
     print_step(4, 4, "Installing OpenClaw...")
     script_dir = os.path.dirname(os.path.abspath(__file__))
     result = run(
-        [sys.executable, "-m", "pip", "install", "-e", script_dir, "--quiet"],
+        [sys.executable, "-m", "pip", "install", "-e", script_dir],
         capture_output=True,
+        text=True,
     )
     if result.returncode != 0:
-        # Fallback: try pip3
-        run(["pip3", "install", "-e", script_dir, "--quiet"])
+        print(f"  pip install failed: {result.stderr.splitlines()[-1] if result.stderr else 'unknown error'}")
+        print("  Hint: Try running manually: pip install -e .")
+        sys.exit(1)
+    print("  Installed successfully.")
 
-    # 5. Initialize config
+    # 5. Initialize config (import directly to avoid subprocess stdin issues)
     print()
     print("Initializing config...")
-    result = run(["openclaw", "init"], capture_output=True)
-    if result.returncode != 0:
-        run([sys.executable, "-m", "openclaw.cli", "init"])
+    sys.path.insert(0, script_dir)
+    from openclaw.config import CONFIG_FILE, DEFAULT_CONFIG, save_config
+    if CONFIG_FILE.exists():
+        print(f"  Config already exists: {CONFIG_FILE} (keeping current)")
+    else:
+        save_config(DEFAULT_CONFIG)
+        print(f"  Config created: {CONFIG_FILE}")
 
     print()
     print("=== Setup Complete ===")
